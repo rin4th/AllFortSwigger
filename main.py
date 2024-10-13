@@ -3,14 +3,12 @@ from rich import print
 from rich.panel import Panel
 import platform
 
-from core.utils import check_url
-from parsers.html_parser import parse_lab_info
+from core.utils import RequestLab
+from parsers.html_parser import LabParser
 from core.attack import run_solver
 
 console = Console()
-repeat = True
 URL = ""
-clear = "cls" if platform.system() == "Windows" else "clear"
 
 def print_banner():
     print(r"""[bold blue]
@@ -24,32 +22,45 @@ def print_banner():
     ╚══════════════════════════════════════════════════════════════════════════╝ [/bold blue]
     """)
 
-if __name__ == "__main__":
+def display_lab_info(info_lab):
+    """Display the lab information in a clean format using Rich's Panel."""
+    panel_content = f"""
+[bold blue]Vulnerability Type: {info_lab[0]}
+Lab Name: [bold white]{info_lab[1]}[/bold white]
+URL: [bold white]{info_lab[2]}[/bold white]
+Objective: [bold white]{info_lab[3]}[/bold white]
+Difficulty: [bold white]{info_lab[4]}[/bold white][/bold blue]
+    """
+    console.print(Panel(panel_content.strip(), title="Lab Information"))
+
+def main_loop():
+    """Main function to run the lab attack logic."""
+    repeat = True
+    clear = "cls" if platform.system() == "Windows" else "clear"
+
     while repeat:
         print_banner()
         URL = console.input("[bold green]Enter the URL to attack: [/bold green]")
-        html_content = check_url(URL)
+        request_lab = RequestLab(URL)
+        valid_url = request_lab.validate_url_lab()
 
-        if html_content == None:
-            print("[bold red]Invalid URL[/bold red]")
+        if not valid_url:
+            console.print("[bold red]Invalid URL[/bold red]\n")
             break
 
-        info_lab = parse_lab_info(URL)
-        print()
-        print(Panel(f"""[bold blue]Vulnerability Type: {info_lab[0]}\n \\
-                    Lab Name: {info_lab[1]}\n \\
-                    URL: {info_lab[2]}\n \\
-                    Objective: {info_lab[3]}\n \\
-                    Dificulty: {info_lab[4]}\n \\
-                    [/bold blue]", title="Lab Information"""))
-            
-        if console.input("\n[bold green]Continue with the attack (Y/n)? [/bold green]").lower() == "y":
-            run_solver(URL, info_lab)
+        html_content = request_lab.html_content
 
-            
+        lab_parser = LabParser(html_content)
+        info_lab = lab_parser.parse_lab_info()
+        display_lab_info(info_lab)
 
-
+        if console.input("\n[bold green]Continue with the attack (Y/n)? [/bold green]").lower() != "y":
+            break
         
+        run_solver(URL, info_lab)
 
         repeat = input("\nDo you want to check another URL? (y/n): ").lower() == "y"
 
+
+if __name__ == "__main__":
+    main_loop()
