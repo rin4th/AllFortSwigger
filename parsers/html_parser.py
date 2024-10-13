@@ -4,9 +4,7 @@ import json
 
 from core.utils import retrieve_json_data
 
-
-
-def parse_lab_information(url):
+def parse_lab_info(url):
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -51,4 +49,3 @@ def parse_lab_information(url):
     objective_lab = r"[bold white]" + objective_lab[:-9] + r"[/bold white]"
 
     return  type_vuln, name_lab, link_lab['href'], objective_lab, dificulty
-
