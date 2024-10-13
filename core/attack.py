@@ -30,8 +30,8 @@ def run_solver(URL, info_lab):
                     solver.solve(URL)
                     return
 
-            print(f"Lab name '{info_lab[1]}' not found for {info_lab[0]}")
-            return
+                print(f"Lab name '{info_lab[1]}' not found for {info_lab[0]}")
+                return
 
 
     print(f"Starting attack on {URL}")

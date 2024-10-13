@@ -24,6 +24,10 @@ class RequestLab:
                 if lab['name'] in title:
                     return True
         return False
+    
+    def get_html_content(self):
+        """Return the HTML content of the lab."""
+        return self.html_content
          
     def request_get(self):
         """Make a GET request to the lab URL."""

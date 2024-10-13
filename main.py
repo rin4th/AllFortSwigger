@@ -48,7 +48,7 @@ def main_loop():
             console.print("[bold red]Invalid URL[/bold red]\n")
             break
 
-        html_content = request_lab.html_content
+        html_content = request_lab.get_html_content()
 
         lab_parser = LabParser(html_content)
         lab_parser.parse_lab_info()
