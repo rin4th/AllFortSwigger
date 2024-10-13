@@ -5,75 +5,93 @@
             "listLab": [
                 {
                     "name": "SQL injection vulnerability in WHERE clause allowing retrieval of hidden data",
-                    "solverClass": "HiddenDataSolver"
+                    "solverClass": "HiddenDataSolver",
+                    "module_name": "hidden_data"
                 },
                 {
                     "name": "SQL injection vulnerability allowing login bypass",
-                    "solverClass": "LoginBypassSolver"
+                    "solverClass": "LoginBypassSolver",
+                    "module_name": "login_bypass"
                 },
                 {
                     "name": "SQL injection attack, querying the database type and version on Oracle",
-                    "solverClass": "DatabaseVersionOracleSolver"
+                    "solverClass": "DatabaseVersionOracleSolver",
+                    "module_name": "database_version_oracle"
                 },
                 {
                     "name": "SQL injection attack, querying the database type and version on MySQL and Microsoft",
-                    "solverClass": "DatabaseVersionMysqlMicrosoftSolver"
+                    "solverClass": "DatabaseVersionMysqlMicrosoftSolver",
+                    "module_name": "database_version_mysql_microsoft"
                 },
                 {
                     "name": "SQL injection attack, listing the database contents on non-Oracle databases",
-                    "solverClass": "DatabaseContentsNonOracleSolver"
+                    "solverClass": "DatabaseContentsNonOracleSolver",
+                    "module_name": "database_contents_non_oracle"
                 },
                 {
                     "name": "SQL injection attack, listing the database contents on Oracle",
-                    "solverClass": "DatabaseContentsOracleSolver"
+                    "solverClass": "DatabaseContentsOracleSolver",
+                    "module_name": "database_contents_oracle"
                 },
                 {
                     "name": "SQL injection UNION attack, determining the number of columns returned by the query",
-                    "solverClass": "UnionQueryNumberColumnsSolver"
+                    "solverClass": "UnionQueryNumberColumnsSolver",
+                    "module_name": "union_query_number_columns"
                 },
                 {
                     "name": "SQL injection UNION attack, finding a column containing text",
-                    "solverClass": "UnionQueryFindColumnSolver"
+                    "solverClass": "UnionQueryFindColumnSolver",
+                    "module_name": "union_query_find_column"
                 },
                 {
                     "name": "SQL injection UNION attack, retrieving data from other tables",
-                    "solverClass": "UnionQueryRetrieveDataSolver"
+                    "solverClass": "UnionQueryRetrieveDataSolver",
+                    "module_name": "union_query_retrieve_data"
                 },
                 {
                     "name": "SQL injection UNION attack, retrieving multiple values in a single column",
-                    "solverClass": "UnionQueryRetrieveMultipleValuesSolver"
+                    "solverClass": "UnionQueryRetrieveMultipleValuesSolver",
+                    "module_name": "union_query_retrieve_multiple_values"
                 },
                 {
                     "name": "Blind SQL injection with conditional responses",
-                    "solverClass": "BlindConditionalResponsesSolver"
+                    "solverClass": "BlindConditionalResponsesSolver",
+                    "module_name": "blind_conditional_responses"
                 },
                 {
                     "name": "Blind SQL injection with conditional errors",
-                    "solverClass": "BlindConditionalErrorsSolver"
+                    "solverClass": "BlindConditionalErrorsSolver",
+                    "module_name": "blind_conditional_errors"
                 },
                 {
                     "name": "Visible error-based SQL injection",
-                    "solverClass": "ErrorBasedSolver"
+                    "solverClass": "ErrorBasedSolver",
+                    "module_name": "error_based"
                 },
                 {
                     "name": "Blind SQL injection with time delays",
-                    "solverClass": "BlindTimeDelaysSolver"
+                    "solverClass": "BlindTimeDelaysSolver",
+                    "module_name": "blind_time_delays"
                 },
                 {
                     "name": "Blind SQL injection with time delays and information retrieval",
-                    "solverClass": "BlindTimeDelaysInformationRetrievalSolver"
+                    "solverClass": "BlindTimeDelaysInformationRetrievalSolver",
+                    "module_name": "blind_time_delays_information_retrieval"
                 },
                 {
                     "name": "Blind SQL injection with out-of-band interaction",
-                    "solverClass": "BlindOutOfBandInteractionSolver"
+                    "solverClass": "BlindOutOfBandInteractionSolver",
+                    "module_name": "blind_out_of_band_interaction"
                 },
                 {
                     "name": "Blind SQL injection with out-of-band data exfiltration",
-                    "solverClass": "BlindOutOfBandDataExfiltrationSolver"
+                    "solverClass": "BlindOutOfBandDataExfiltrationSolver",
+                    "module_name": "blind_out_of_band_data_exfiltration"
                 },
                 {
                     "name": "SQL injection with filter bypass via XML encoding",
-                    "solverClass": "BypassXmlSolver"
+                    "solverClass": "BypassXmlSolver",
+                    "module_name": "bypass_xml"
                 }
             ]
         }
