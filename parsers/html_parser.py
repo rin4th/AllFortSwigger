@@ -39,7 +39,7 @@ def parse_lab_info(url):
     for vulns in data_vuln['listVuln']:
         for vuln in vulns['listLab']:
             if vuln['name'] == name_lab:
-                type_vuln = vulns['nameVuln']
+                type_vuln = vulns['vulnName']
                 break
     
     # recolor

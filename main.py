@@ -1,12 +1,11 @@
 from rich.console import Console
 from rich import print
 from rich.panel import Panel
-import os
 import platform
-import time
 
 from core.utils import check_url
 from parsers.html_parser import parse_lab_info
+from core.attack import run_solver
 
 console = Console()
 repeat = True
@@ -43,6 +42,10 @@ if __name__ == "__main__":
                     Objective: {info_lab[3]}\n \\
                     Dificulty: {info_lab[4]}\n \\
                     [/bold blue]", title="Lab Information"""))
+            
+        if console.input("\n[bold green]Continue with the attack (Y/n)? [/bold green]").lower() == "y":
+            run_solver(URL, info_lab)
+
             
 
 
