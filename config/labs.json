@@ -1,0 +1,83 @@
+{
+    "listVuln" :[
+        {
+            "nameVuln": "SQL Injection",
+            "listLab": [
+                {
+                    "name": "SQL injection vulnerability in WHERE clause allowing retrieval of hidden data",
+                    "automation": "hidden_data"
+                },
+                {
+                    "name": "SQL injection vulnerability allowing login bypass",
+                    "automation": "login_bypass"
+                },
+                {
+                    "name": "SQL injection attack, querying the database type and version on Oracle",
+                    "automation": "database_version_oracle"
+                },
+                {
+                    "name": "SQL injection attack, querying the database type and version on MySQL and Microsoft",
+                    "automation": "database_version_mysql_microsoft"
+                },
+                {
+                    "name": "SQL injection attack, listing the database contents on non-Oracle databases",
+                    "automation": "database_contents_non_oracle"
+                },
+                {
+                    "name": "SQL injection attack, listing the database contents on Oracle",
+                    "automation": "database_contents_oracle"
+                },
+                {
+                    "name": "SQL injection UNION attack, determining the number of columns returned by the query",
+                    "automation": "union_query_number_columns"
+                },
+                {
+                    "name": "SQL injection UNION attack, finding a column containing text",
+                    "automation": "union_query_find_column"
+                },
+                {
+                    "name": "SQL injection UNION attack, retrieving data from other tables",
+                    "automation": "union_query_retrieve_data"
+                },
+                {
+                    "name": "SQL injection UNION attack, retrieving multiple values in a single column",
+                    "automation": "union_query_retrieve_multiple_values"
+                },
+                {
+                    "name": "Blind SQL injection with conditional responses",
+                    "automation": "blind_conditional_responses"
+                },
+                {
+                    "name": "Blind SQL injection with conditional errors",
+                    "automation": "blind_conditional_errors"
+                },
+                {
+                    "name": "Visible error-based SQL injection",
+                    "automation": "error_based"
+                },
+                {
+                    "name": "Blind SQL injection with time delays",
+                    "automation": "blind_time_delays"
+                },
+                {
+                    "name": "Blind SQL injection with time delays and information retrieval",
+                    "automation": "blind_time_delays_information_retrieval"
+                },
+                {
+                    "name": "Blind SQL injection with out-of-band interaction",
+                    "automation": "blind_out_of_band_interaction"
+                },
+                {
+                    "name": "Blind SQL injection with out-of-band data exfiltration",
+                    "automation": "blind_out_of_band_data_exfiltration"
+                },
+                {
+                    "name": "SQL injection with filter bypass via XML encoding",
+                    "automation": "bypass_xml"
+                }
+
+            ]
+        }
+    ]
+}
+
