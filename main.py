@@ -55,7 +55,7 @@ def main_loop():
         info_lab = [lab_parser.get_vulnerability_type(),
                     lab_parser.get_lab_name(),
                     lab_parser.get_lab_link(),
-                    lab_parser.get_lab_difficulty(),
+                    lab_parser.get_lab_objective(),
                     lab_parser.get_lab_difficulty()]
         display_lab_info(info_lab)
 
