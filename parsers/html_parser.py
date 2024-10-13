@@ -32,9 +32,7 @@ class LabParser:
         self.name_lab = self.get_lab_name(soup)
         self.objective_lab = self.get_lab_objective(soup_lab_info)
         self.difficulty = self.get_lab_difficulty(soup_lab_info)
-        self.type_vuln = self.get_vulnerability_type()
-
-        return self.type_vuln, self.name_lab, self.lab_link, self.objective_lab, self.difficulty
+        self.type_vuln = self.get_vulnerability_type()    
     
     def get_lab_name(self, soup):
         """Extract the lab name from the page."""

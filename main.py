@@ -51,7 +51,12 @@ def main_loop():
         html_content = request_lab.html_content
 
         lab_parser = LabParser(html_content)
-        info_lab = lab_parser.parse_lab_info()
+        lab_parser.parse_lab_info()
+        info_lab = [lab_parser.get_vulnerability_type(),
+                    lab_parser.get_lab_name(),
+                    lab_parser.get_lab_link(),
+                    lab_parser.get_lab_difficulty(),
+                    lab_parser.get_lab_difficulty()]
         display_lab_info(info_lab)
 
         if console.input("\n[bold green]Continue with the attack (Y/n)? [/bold green]").lower() != "y":
