@@ -2,6 +2,7 @@ from rich.console import Console
 from rich import print
 from rich.panel import Panel
 import platform
+from halo import Halo
 
 from core.utils import RequestLab
 from parsers.html_parser import LabParser
@@ -41,17 +42,21 @@ def main_loop():
     while repeat:
         print_banner()
         URL = console.input("[bold green]Enter the URL to attack: [/bold green]")
+
+        spinner = Halo(text="Validating URL", spinner='dots')
+        spinner.start()
         request_lab = RequestLab(URL)
         valid_url = request_lab.validate_url_lab()
 
         if not valid_url:
             console.print("[bold red]Invalid URL[/bold red]\n")
             break
-
+        spinner.text = "Parsing lab information"
         html_content = request_lab.get_html_content()
 
         lab_parser = LabParser(html_content)
         lab_parser.parse_lab_info()
+        spinner.stop()
         info_lab = [lab_parser.get_vulnerability_type(),
                     lab_parser.get_lab_name(),
                     lab_parser.get_lab_link(),

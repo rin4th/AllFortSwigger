@@ -11,43 +11,47 @@ class LabParser:
         self.objective_lab = None
         self.difficulty = None
         self.type_vuln = None
+        self.soup = None
+        self.soup_lab_info = None
 
-    def fetch_lab_page(self):
+        self.parse_lab_info()
+
+    def fetch_page(self):
         """Fetch the lab page and return the BeautifulSoup object."""
-        return BeautifulSoup(self.html_content.text, 'html.parser')
+        self.soup = BeautifulSoup(self.html_content.text, 'html.parser')
     
     def fetch_lab_page_info(self):
         """Fetch the lab info page and return the BeautifulSoup object."""
         response = requests.get(self.lab_link)
-        return BeautifulSoup(response.text, 'html.parser')
+        self.soup_lab_info = BeautifulSoup(response.text, 'html.parser')
     
 
     def parse_lab_info(self):
         """Main method to parse lab info, objective, difficulty, and type."""
-        soup = self.fetch_lab_page()
+        self.fetch_page()
         
-        self.lab_link = self.get_lab_link(soup)
-        soup_lab_info = self.fetch_lab_page_info()
+        self.lab_link = self.get_lab_link()
+        self.fetch_lab_page_info()
 
-        self.name_lab = self.get_lab_name(soup)
-        self.objective_lab = self.get_lab_objective(soup_lab_info)
-        self.difficulty = self.get_lab_difficulty(soup_lab_info)
+        self.name_lab = self.get_lab_name()
+        self.objective_lab = self.get_lab_objective()
+        self.difficulty = self.get_lab_difficulty()
         self.type_vuln = self.get_vulnerability_type()    
     
-    def get_lab_name(self, soup):
+    def get_lab_name(self):
         """Extract the lab name from the page."""
-        return soup.head.title.text
+        return self.soup.head.title.text
 
-    def get_lab_link(self, soup):
+    def get_lab_link(self):
         """Extract the link to the lab."""
-        link = soup.find('a', class_='link-back')
+        link = self.soup.find('a', class_='link-back')
         if link:
             return link['href']
         return None
 
-    def get_lab_objective(self, soup_lab_info):
+    def get_lab_objective(self):
         """Retrieve the objective of the lab."""
-        paragraphs = soup_lab_info.find_all('p')
+        paragraphs = self.soup_lab_info.find_all('p')
 
         for p in paragraphs:
             if "To solve the lab" in p.get_text():
@@ -55,9 +59,9 @@ class LabParser:
 
         return None
 
-    def get_lab_difficulty(self, soup_lab_info):
+    def get_lab_difficulty(self):
         """Retrieve the difficulty of the lab and format it."""
-        p_dif = soup_lab_info.find('p', class_='widget-container-labelevel')
+        p_dif = self.soup_lab_info.find('p', class_='widget-container-labelevel')
         difficulty = p_dif.find('span').get_text()
 
         if difficulty == "APPRENTICE":

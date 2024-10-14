@@ -18,17 +18,16 @@ def run_solver(URL, info_lab):
         if vuln['nameVuln'] == info_lab[0]:
             for lab in vuln['listLab']:
                 if lab['name'] == info_lab[1]:
-                    print("Berhasil")
                     solver_class_name = lab['solverClass']
                     module_name = lab['module_name']
                     
-                    module_path = f"services.sql_injection.labs.{module_name}.{solver_class_name}"
+                    module_path = f"services.sql_injection.labs.{module_name}"
                     module = importlib.import_module(module_path)
                     
                     solver_class = getattr(module, solver_class_name)
                     
                     solver = solver_class(URL)
-                    solver.solve(URL)
+                    solver.solve()
                     return
 
                 print(f"Lab name '{info_lab[1]}' not found for {info_lab[0]}")

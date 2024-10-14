@@ -3,8 +3,10 @@ from bs4 import BeautifulSoup
 from rich.console import Console
 from rich.table import Table
 from rich import box 
+from rich import print
 from halo import Halo
-import string
+import time
+
 
 
 from core.utils import RequestLab
@@ -20,47 +22,57 @@ class SQLInjectionBaseSolver(ABC):
 
     def _request_lab(self, method='GET'):
         """Return the RequestLab object."""
-        self.console.log(f"Requesting {self.url}")
         request = RequestLab(self.url)
         
         if method == 'GET':
-            self.html_content = request.request_get()
+            request.request_get()
+            self.html_content = request.get_html_content()
         # elif method == 'POST':
         #     self.html_content = request.request_post()
         # elif method == 'PUT':
         #     self.html_content = request.request_put()
         # elif method == 'DELETE':
         #     self.html_content = request.request_delete()
-        
+        time.sleep(0.5)
         self.__set_soup_html()
 
     def _print_table(self, title, headers, rows):
         """Print a table."""
-        table = Table(title=title, box=box.SIMPLE)
+        table = Table(title=title, box=box.ROUNDED)
         for header in headers:
             table.add_column(header)
         for row in rows:
             table.add_row(*row)
-        self.console.print(table)
+        self.console.log(table)
 
     def __set_soup_html(self):
         """Set the soup HTML."""
-        self.console.log("Parsing HTML content")
         self.soup_html = BeautifulSoup(self.html_content.text, 'html.parser')
+        time.sleep(0.5)
     
     def _print_payload(self, payload):
         """Print the payload."""
-        ascii_char = string.ascii_letters + string.digits + string.punctuation
         payload_char = ""
-        spinner = Halo(text=ascii_char, spinner='dots')
+        spinner = Halo(text=payload_char, spinner='dots', interval=1000)
         spinner.start()
         for char in payload:
+            time.sleep(0.3)
             payload_char += char
             spinner.text = payload_char
+        spinner.stop()
             
-
-
-        
+    def _print_solved(self):
+        """Print the solved message."""
+        print(r"""[bold green]
+        .-------------------------------------.
+        |  ____   ___  _ __     _______ ____  |
+        | / ___| / _ \| |\ \   / / ____|  _ \ |
+        | \___ \| | | | | \ \ / /|  _| | | | ||
+        |  ___) | |_| | |__\ V / | |___| |_| ||
+        | |____/ \___/|_____\_/  |_____|____/ |
+        |                                     |
+        '-------------------------------------' [/bold green]
+""")
 
     @abstractmethod
     def build_payload():
