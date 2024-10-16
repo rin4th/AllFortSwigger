@@ -1,12 +1,17 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+import logging
 
 
 class RequestLab:
     def __init__(self, URL):
         self.url = URL
         self.html_content = None
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        self.headers = None
+
+        self.session = requests.Session()
 
     def validate_url_lab(self):
         """Validate the URL of the lab."""
@@ -32,11 +37,22 @@ class RequestLab:
     def request_get(self):
         """Make a GET request to the lab URL."""
         try:
-            self.html_content = requests.get(self.url)
+            self.html_content = self.session.get(self.url)
             if self.html_content.status_code != 200:
                 return None
             return True
         except Exception as e:
+            return None
+        
+    def request_post(self, data=None, cookies=None):
+        """Make a POST request to the lab URL."""
+        try:
+            self.html_content = self.session.post(url=self.url, data=data,
+                                                  cookies=cookies, headers=self.headers,
+                                                  allow_redirects=False)
+
+        except Exception as e:
+            print("An error occurred:", e)
             return None
     
         

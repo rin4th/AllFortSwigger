@@ -20,11 +20,8 @@ class HiddenDataSolver(SQLInjectionBaseSolver):
         spinner.text = 'Requesting the lab'
         self._request_lab('GET')
         spinner.text = 'Parsing Categories'
-        time.sleep(0.5)
         spinner.text = 'Parsing Products'
-        time.sleep(0.5)
         spinner.text = 'Building the payload'
-        time.sleep(0.5)
         self.set_category()
         spinner.stop()
         self.print_categories()

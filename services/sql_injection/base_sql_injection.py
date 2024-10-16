@@ -4,7 +4,6 @@ from rich.console import Console
 from rich.table import Table
 from rich import box 
 from rich import print
-from halo import Halo
 import time
 
 
@@ -20,20 +19,20 @@ class SQLInjectionBaseSolver(ABC):
         self.soup_html = None
         self.payload = None
 
-    def _request_lab(self, method='GET'):
+    def _request_lab(self, method='GET', data=None, cookies=None):
         """Return the RequestLab object."""
         request = RequestLab(self.url)
         
         if method == 'GET':
             request.request_get()
             self.html_content = request.get_html_content()
-        # elif method == 'POST':
-        #     self.html_content = request.request_post()
+        elif method == 'POST':
+            request.request_post(data, cookies)
+            self.html_content = request.get_html_content()
         # elif method == 'PUT':
         #     self.html_content = request.request_put()
         # elif method == 'DELETE':
         #     self.html_content = request.request_delete()
-        time.sleep(0.5)
         self.__set_soup_html()
 
     def _print_table(self, title, headers, rows):
@@ -52,14 +51,7 @@ class SQLInjectionBaseSolver(ABC):
     
     def _print_payload(self, payload):
         """Print the payload."""
-        payload_char = ""
-        spinner = Halo(text=payload_char, spinner='dots', interval=1000)
-        spinner.start()
-        for char in payload:
-            time.sleep(0.3)
-            payload_char += char
-            spinner.text = payload_char
-        spinner.stop()
+        self.console.print("Payload: ", payload)
             
     def _print_solved(self):
         """Print the solved message."""
@@ -73,6 +65,39 @@ class SQLInjectionBaseSolver(ABC):
         |                                     |
         '-------------------------------------' [/bold green]
 """)
+        
+    def determine_DBMS(self):
+        """Determine the DBMS."""
+        pass
+
+    def determine_column_number(self):
+        """Determine the number of columns."""
+        pass
+
+    def finding_data_type_column(self):
+        """Finding the data type of the column."""
+        pass
+
+
+    def determine_DB_version(self):
+        """Determine the DB version."""
+        pass
+
+    def retrieve_DB_name(self):
+        """Retrieve the DB name."""
+        pass
+
+    def retrieve_table_name(self):
+        """Retrieve the table name."""
+        pass
+
+    def retrieve_column_name(self):
+        """Retrieve the column name."""
+        pass
+    
+    def retrieve_data(self):
+        """Retrieve the data."""
+        pass
 
     @abstractmethod
     def build_payload():
