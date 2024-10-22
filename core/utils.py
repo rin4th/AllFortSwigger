@@ -44,12 +44,12 @@ class RequestLab:
         except Exception as e:
             return None
         
-    def request_post(self, data=None, cookies=None):
+    def request_post(self, data=None, cookies=None, allow_redirects=True):
         """Make a POST request to the lab URL."""
         try:
-            self.html_content = self.session.post(url=self.url, data=data,
+            self.html_content = self.session.post(self.url, data=data,
                                                   cookies=cookies, headers=self.headers,
-                                                  allow_redirects=False)
+                                                  allow_redirects=allow_redirects)
 
         except Exception as e:
             print("An error occurred:", e)

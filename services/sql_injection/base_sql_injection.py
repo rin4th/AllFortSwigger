@@ -18,8 +18,12 @@ class SQLInjectionBaseSolver(ABC):
         self.html_content = None
         self.soup_html = None
         self.payload = None
+        self.cookies = None
+        self.csrf = None
+        self.username = 'administrator'
 
-    def _request_lab(self, method='GET', data=None, cookies=None):
+    # This method quite's messy
+    def _request_lab(self, method='GET', data=None, cookies=None, allow_redirects=True):
         """Return the RequestLab object."""
         request = RequestLab(self.url)
         
@@ -27,13 +31,14 @@ class SQLInjectionBaseSolver(ABC):
             request.request_get()
             self.html_content = request.get_html_content()
         elif method == 'POST':
-            request.request_post(data, cookies)
+            request.request_post(data=data, cookies=cookies, allow_redirects=allow_redirects)
             self.html_content = request.get_html_content()
         # elif method == 'PUT':
         #     self.html_content = request.request_put()
         # elif method == 'DELETE':
         #     self.html_content = request.request_delete()
         self.__set_soup_html()
+    # End of messy method
 
     def _print_table(self, title, headers, rows):
         """Print a table."""
@@ -98,6 +103,34 @@ class SQLInjectionBaseSolver(ABC):
     def retrieve_data(self):
         """Retrieve the data."""
         pass
+
+    def request_login(self, body_form):
+        """Request the login."""
+        self.url = self.url + '/login'
+        self.set_csrf()
+        self._request_lab('POST', data=body_form, cookies=self.cookies, allow_redirects=False)
+        self.print_session()
+
+
+    def set_csrf(self):
+        """Parse the CSRF."""
+        self.csrf = self.soup_html.find('input', {'name': 'csrf'})['value']
+
+    def set_cookies(self):
+        """Parse the session."""
+        self.cookies = {
+            'session': self.html_content.cookies.get('session')
+        }
+    
+    def get_cookies(self):
+        """Return the cookies."""
+        return self.cookies
+
+    def print_session(self):
+        """Print the session."""
+        self.set_cookies()
+        self.console.log(f"[bold blue]Session Administrator:[/bold blue] {self.get_cookies()}")
+
 
     @abstractmethod
     def build_payload():
