@@ -5,8 +5,7 @@ from rich.table import Table
 from rich import box 
 from rich import print
 import time
-
-
+import json
 
 from core.utils import RequestLab
 
@@ -21,6 +20,25 @@ class SQLInjectionBaseSolver(ABC):
         self.cookies = None
         self.csrf = None
         self.username = 'administrator'
+        self.dbms = None
+        self.json_data = None
+        self.json_dbms = self.get_list_dbms()
+        self.categories = []
+        self.categories_url = []
+
+        
+    def get_json_data(self):
+        """Read the JSON"""
+        path = '/mnt/project/ctf/portSwigger/AllFortSwigger/services/sql_injection/dbms.json'
+        with open(path, 'r') as file:
+            self.json_data = json.load(file)
+            file.close()
+    
+    def get_list_dbms(self):
+        """Return the list of DBMS."""
+        if self.json_data is None:
+            self.get_json_data()
+        return self.json_data['list_dbms']
 
     # This method quite's messy
     def _request_lab(self, method='GET', data=None, cookies=None, allow_redirects=True):
@@ -52,7 +70,6 @@ class SQLInjectionBaseSolver(ABC):
     def __set_soup_html(self):
         """Set the soup HTML."""
         self.soup_html = BeautifulSoup(self.html_content.text, 'html.parser')
-        time.sleep(0.5)
     
     def _print_payload(self, payload):
         """Print the payload."""
@@ -73,7 +90,9 @@ class SQLInjectionBaseSolver(ABC):
         
     def determine_DBMS(self):
         """Determine the DBMS."""
-        pass
+        for dbms in self.json_dbms:
+            for query in dbms['list_command']:
+                url_brute = self.url + self.categories_url[1] + query
 
     def determine_column_number(self):
         """Determine the number of columns."""
@@ -111,7 +130,6 @@ class SQLInjectionBaseSolver(ABC):
         self._request_lab('POST', data=body_form, cookies=self.cookies, allow_redirects=False)
         self.print_session()
 
-
     def set_csrf(self):
         """Parse the CSRF."""
         self.csrf = self.soup_html.find('input', {'name': 'csrf'})['value']
@@ -131,6 +149,15 @@ class SQLInjectionBaseSolver(ABC):
         self.set_cookies()
         self.console.log(f"[bold blue]Session Administrator:[/bold blue] {self.get_cookies()}")
 
+    def set_category(self):
+        """Parse the category."""
+        self._request_lab('GET')
+        categories = self.soup_html.find_all('a', class_='filter-category')
+        for category in categories:
+            if category.text == "All":
+                continue
+            self.categories.append(category.text)
+            self.categories_url.append(category['href'])
 
     @abstractmethod
     def build_payload():

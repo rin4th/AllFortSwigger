@@ -6,8 +6,6 @@ from services.sql_injection.base_sql_injection import SQLInjectionBaseSolver
 class HiddenDataSolver(SQLInjectionBaseSolver):
     def __init__(self, URL):
         super().__init__(URL)
-        self.categories = []
-        self.categories_url = []
         self.products_name = []
         self.products_price = []
         self.products_url = []
@@ -39,16 +37,6 @@ class HiddenDataSolver(SQLInjectionBaseSolver):
         self.set_products()
         self.print_products()
         self._print_solved()
-
-        
-    def set_category(self):
-        """Parse the category."""
-        categories = self.soup_html.find_all('a', class_='filter-category')
-        for category in categories:
-            if category.text == "All":
-                continue
-            self.categories.append(category.text)
-            self.categories_url.append(category['href'])
 
     def print_categories(self):
         """Print the categories."""
