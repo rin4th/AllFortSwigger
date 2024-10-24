@@ -38,8 +38,6 @@ class RequestLab:
         """Make a GET request to the lab URL."""
         try:
             self.html_content = self.session.get(self.url)
-            if self.html_content.status_code != 200:
-                return None
             return True
         except Exception as e:
             return None
@@ -72,3 +70,20 @@ class JSONParser:
         if self.json_data is None:
             self.get_json_data()
         return self.json_data['listVuln']
+
+class JSONPayloadSQLInjection:
+    def __init__(self):
+        self.json_data = None
+
+    def get_json_data(self):
+        """Read the JSON"""
+        path = '/mnt/project/ctf/portSwigger/AllFortSwigger/services/sql_injection/dbms.json'
+        with open(path, 'r') as file:
+            self.json_data = json.load(file)
+            file.close()
+    
+    def get_list_dbms(self):
+        """Return the list of DBMS."""
+        if self.json_data is None:
+            self.get_json_data()
+        return self.json_data['list_dbms']
