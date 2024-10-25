@@ -34,10 +34,10 @@ class RequestLab:
         """Return the HTML content of the lab."""
         return self.html_content
          
-    def request_get(self):
+    def request_get(self, cookies=None):
         """Make a GET request to the lab URL."""
         try:
-            self.html_content = self.session.get(self.url)
+            self.html_content = self.session.get(self.url, cookies=cookies)
             return True
         except Exception as e:
             return None

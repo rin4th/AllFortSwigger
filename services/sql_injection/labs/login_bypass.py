@@ -10,7 +10,6 @@ class LoginBypassSolver(SQLInjectionBaseSolver):
         super().__init__(URL)
         self.path_login = "/login"
         self.password = None
-        self.body_form = None
 
     def solve(self):
         """Solve the lab."""
