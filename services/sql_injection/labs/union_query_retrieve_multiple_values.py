@@ -11,12 +11,12 @@ class UnionQueryRetrieveMultipleValuesSolver(SQLInjectionBaseSolver):
         self.determine_DB_version()
         self.retrieve_table_name()
         self.retrieve_column_name()
-        self.build_payload()
+        self.custom_payload()
         self.request_login(allow_redirects=False)
         self._print_solved()
 
 
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         self.spinner.start()
         self.spinner.text = 'Retrieve the Data'

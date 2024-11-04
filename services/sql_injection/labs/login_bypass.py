@@ -25,7 +25,7 @@ class LoginBypassSolver(SQLInjectionBaseSolver):
         spinner.text = 'Setting the username'
         spinner.text = 'Setting the password'
         spinner.text = 'Building the payload'
-        self.build_payload()
+        self.custom_payload()
         spinner.stop()
         sys.stdout.flush()
         self._print_payload(self.payload)
@@ -36,7 +36,7 @@ class LoginBypassSolver(SQLInjectionBaseSolver):
         self.print_session()
         self._print_solved()
     
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         self.set_password()
         self.set_csrf()

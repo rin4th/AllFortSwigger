@@ -11,6 +11,6 @@ class DatabaseVersionMysqlMicrosoftSolver(SQLInjectionBaseSolver):
         self.determine_DB_version()
         self._print_solved()
 
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         pass

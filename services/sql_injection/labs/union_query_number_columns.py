@@ -10,6 +10,6 @@ class UnionQueryNumberColumnsSolver(SQLInjectionBaseSolver):
         self.determine_column_number()
         self._print_solved()
 
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         pass

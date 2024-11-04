@@ -15,6 +15,6 @@ class UnionQueryRetrieveDataSolver(SQLInjectionBaseSolver):
         self.request_login(allow_redirects=False)
         self._print_solved()
 
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         pass

@@ -25,7 +25,7 @@ class HiddenDataSolver(SQLInjectionBaseSolver):
         self.print_categories()
         self.set_products()
         self.print_products()
-        self.build_payload()
+        self.custom_payload()
         self._print_payload(self.payload)
         self.payload_url = r"[red]"+self.url+self.categories_url[1]+self.payload+r"[/red]"
         self.console.log(fr"[bold blue]Payload URL:[/bold blue] {self.payload_url}")
@@ -57,6 +57,6 @@ class HiddenDataSolver(SQLInjectionBaseSolver):
         self._print_table(f"\nProducts of {self.categories[1]}", ["Name", "Price", "URL"],
                           zip(self.products_name, self.products_price, self.products_url))
 
-    def build_payload(self):
+    def custom_payload(self):
         """Build the payload."""
         self.payload = "'+OR+1=1--"

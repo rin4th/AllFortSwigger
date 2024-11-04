@@ -8,11 +8,12 @@ class UnionQueryFindColumnSolver(SQLInjectionBaseSolver):
         """Solve the lab."""
         self.determine_DBMS()
         self.determine_column_number()
-        self.determine_column_name()
+        self.custom_payload()
         self._print_solved()
 
-    def determine_column_name(self):
-        """Determine the column name."""
+
+    def custom_payload(self):
+        """Build the payload."""
         string_solver = self.soup_html.find('p', id='hint').text
         string_solver = string_solver[40:-1]
         self.console.log(f"[bold blue]String to print :[/bold blue] {string_solver}")
@@ -34,7 +35,3 @@ class UnionQueryFindColumnSolver(SQLInjectionBaseSolver):
                 self.spinner.stop()
                 self.console.log(f"[bold blue]Columns that contain string :[/bold blue] {i+1}")
                 return
-
-    def build_payload(self):
-        """Build the payload."""
-        pass

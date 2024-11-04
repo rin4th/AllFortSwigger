@@ -267,7 +267,7 @@ class SQLInjectionBaseSolver(ABC):
 """)
 
     @abstractmethod
-    def build_payload():
+    def custom_payload():
         """Build the payload."""
         pass
 
