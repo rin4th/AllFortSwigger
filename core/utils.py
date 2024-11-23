@@ -60,7 +60,7 @@ class JSONParser:
         
     def get_json_data(self):
         """Read the JSON"""
-        path = '/home/machi/ctf/portswigger/AllFortSwigger/config/labs.json'
+        path = '/home/machi/ctf/portSwigger/AllFortSwigger/config/labs.json'
         with open(path, 'r') as file:
             self.json_data = json.load(file)
             file.close()
@@ -77,7 +77,7 @@ class JSONPayloadSQLInjection:
 
     def get_json_data(self):
         """Read the JSON"""
-        path = '/home/machi/ctf/portswigger/AllFortSwigger/services/sql_injection/dbms.json'
+        path = '/home/machi/ctf/portSwigger/AllFortSwigger/services/sql_injection/dbms.json'
         with open(path, 'r') as file:
             self.json_data = json.load(file)
             file.close()

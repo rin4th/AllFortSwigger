@@ -169,14 +169,12 @@ class SQLInjectionBaseSolver(ABC):
         self._request_lab('GET', url_brute)
         td_html = self.soup_html.find_all('td')
         th_html = self.soup_html.find_all('th')
-        if td_html == null:
-            for td in td_html:
-                if 'username' in td.text or 'USERNAME' in td.text or 'password' in td.text or 'PASSWORD' in td.text or 'email' in td.text or 'EMAIL' in td.text:
-                    self.column_name.append(td.text)
-        else:
-            for th in th_html:
-                if 'username' in th.text or 'USERNAME' in th.text or 'password' in th.text or 'PASSWORD' in th.text or 'email' in th.text or 'EMAIL' in th.text:
-                    self.column_name.append(th.text)
+        for td in td_html:
+            if 'username' in td.text or 'USERNAME' in td.text or 'password' in td.text or 'PASSWORD' in td.text or 'email' in td.text or 'EMAIL' in td.text:
+                self.column_name.append(td.text)
+        for th in th_html:
+            if 'username' in th.text or 'USERNAME' in th.text or 'password' in th.text or 'PASSWORD' in th.text or 'email' in th.text or 'EMAIL' in th.text:
+                self.column_name.append(th.text)
         self.spinner.stop()
         self._print_table(f"\nColumns of {self.table_name}", ["Column Name"], zip(self.column_name))
         
@@ -195,11 +193,11 @@ class SQLInjectionBaseSolver(ABC):
         username = []
         password = []
         for th in th_html:
-            if ' ' in th.text:
+            if ' ' in th.text or '-' in th.text:
                 continue
             username.append(th.text)
         for td in td_html:
-            if ' ' in td.text:
+            if ' ' in td.text or '-' in td.text:
                 continue
             password.append(td.text)
         self.spinner.stop()
