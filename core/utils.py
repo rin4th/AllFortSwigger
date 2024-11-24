@@ -1,7 +1,7 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-import logging
+import os
 
 
 class RequestLab:
@@ -57,10 +57,11 @@ class RequestLab:
 class JSONParser:
     def __init__(self):
         self.json_data = None
+        self.path = os.getcwd()
         
     def get_json_data(self):
         """Read the JSON"""
-        path = '/home/machi/ctf/portSwigger/AllFortSwigger/config/labs.json'
+        path = self.path + "/config/labs.json"
         with open(path, 'r') as file:
             self.json_data = json.load(file)
             file.close()
@@ -74,10 +75,11 @@ class JSONParser:
 class JSONPayloadSQLInjection:
     def __init__(self):
         self.json_data = None
+        self.path = os.getcwd()
 
     def get_json_data(self):
         """Read the JSON"""
-        path = '/home/machi/ctf/portSwigger/AllFortSwigger/services/sql_injection/dbms.json'
+        path = self.path + "/services/sql_injection/dbms.json"
         with open(path, 'r') as file:
             self.json_data = json.load(file)
             file.close()
