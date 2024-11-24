@@ -71,6 +71,9 @@
                 "' AND val(cvar(1))=1",
                 "' AND IIF(ATN(2)>0,1,0) BETWEEN 2 AND 0",
                 "' AND cdbl(1)=cdbl(1)"
+            ],
+            "time_based_command": [
+                ""
             ]
         }
     ]
